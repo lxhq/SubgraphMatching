@@ -1,7 +1,7 @@
 # SubgraphMatching
 ## Introduction
 We study the performance of eight representative in-memory
-subgraph matching algorithms. Specifically, we put QuickSI,
+subgraph matching (subgraph query) algorithms. Specifically, we put QuickSI,
 GraphQL, CFL, CECI, DP-iso, RI and VF2++ in a common
 framework to compare them on the following four aspects:
 (1) method of filtering candidate vertices in the data graph;
