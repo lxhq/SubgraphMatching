@@ -12,7 +12,7 @@
 #include <bitset>
 
 // Min priority queue.
-auto extendable_vertex_compare = [](std::pair<std::pair<VertexID, ui>, ui> l, std::pair<std::pair<VertexID, ui>, ui> r) {
+static const auto extendable_vertex_compare = [](std::pair<std::pair<VertexID, ui>, ui> l, std::pair<std::pair<VertexID, ui>, ui> r) {
     if (l.first.second == 1 && r.first.second != 1) {
         return true;
     }
