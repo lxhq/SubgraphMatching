@@ -6,6 +6,7 @@
 #include <future>
 #include <thread>
 #include <fstream>
+#include <sstream>
 
 #include "matchingcommand.h"
 #include "graph/graph.h"
@@ -88,6 +89,8 @@ int main(int argc, char** argv) {
     std::string input_order_num = command.getOrderNum();
     std::string input_distribution_file_path = command.getDistributionFilePath();
     std::string input_csr_file_path = command.getCSRFilePath();
+    std::string input_order = command.getInputOrder();
+
     /**
      * Output the command line information.
      */
@@ -101,6 +104,7 @@ int main(int argc, char** argv) {
     std::cout << "\tOutput Limit: " << input_max_embedding_num << std::endl;
     std::cout << "\tTime Limit (seconds): " << input_time_limit << std::endl;
     std::cout << "\tOrder Num: " << input_order_num << std::endl;
+    std::cout << "\tInput Order: " << input_order << std::endl;
     std::cout << "\tDistribution File Path: " << input_distribution_file_path << std::endl;
     std::cout << "--------------------------------------------------------------------" << std::endl;
 
@@ -271,8 +275,17 @@ int main(int argc, char** argv) {
     }
     else if (input_order_type == "Spectrum") {
         GenerateQueryPlan::generateOrderSpectrum(query_graph, spectrum, order_num);
-    }
-    else {
+    } else if (input_order_type == "Input") {
+        //User can input a specific matching order
+        std::stringstream ss(input_order);
+        ui matching_order_counter = 0;
+        for (ui u; ss >> u;) {
+            matching_order[matching_order_counter++] = u;
+            if (ss.peek() == ',')
+                ss.ignore();
+        }
+        //End of inputing a specific matching order
+    } else {
         std::cout << "The specified order type '" << input_order_type << "' is not supported." << std::endl;
     }
 

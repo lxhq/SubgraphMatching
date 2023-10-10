@@ -23,7 +23,8 @@ enum OptionKeyword {
     SpectrumAnalysisTimeLimit = 11, // -time_limit, The time limit for executing a query in seconds
     SpectrumAnalysisOrderNum = 12, // -order_num, The number of matching orders generated
     DistributionFilePath = 13,          // -dis_file, The output path of the distribution array
-    CSRFilePath = 14                    // -csr, The input csr file path
+    CSRFilePath = 14,                    // -csr, The input csr file path
+    InputOrder = 15,                       // -input_order, The input manual order
 };
 
 class MatchingCommand : public CommandParser{
@@ -94,6 +95,10 @@ public:
 
     std::string getCSRFilePath() {
         return options_value[OptionKeyword::CSRFilePath] == "" ? "" : options_value[OptionKeyword::CSRFilePath];
+    }
+
+    std::string getInputOrder() {
+        return options_value[OptionKeyword::InputOrder] == "" ? "" : options_value[OptionKeyword::InputOrder];
     }
 };
 
