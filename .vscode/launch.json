@@ -6,7 +6,11 @@
         "type": "cppdbg",
         "request": "launch",
         "program": "${workspaceFolder}/build/matching/SubgraphMatching.out",
-        "args": ["-d", "${workspaceFolder}/test/data_graph/HPRD.graph", "-q", "${workspaceFolder}/test/query_graph/query_dense_16_1.graph"],
+        "args": [
+            "-d", "${workspaceFolder}/test/data_graph/HPRD.graph", 
+            "-q", "${workspaceFolder}/test/query_graph/query_dense_16_2.graph",
+            "-engine", "LFTJ"
+        ],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",
         "environment": [],
