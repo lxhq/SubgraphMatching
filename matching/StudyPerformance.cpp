@@ -277,12 +277,25 @@ int main(int argc, char** argv) {
         GenerateQueryPlan::generateOrderSpectrum(query_graph, spectrum, order_num);
     } else if (input_order_type == "Input") {
         //User can input a specific matching order
+        matching_order = new ui[query_graph->getVerticesCount()];
         std::stringstream ss(input_order);
         ui matching_order_counter = 0;
         for (ui u; ss >> u;) {
             matching_order[matching_order_counter++] = u;
             if (ss.peek() == ',')
                 ss.ignore();
+        }
+        pivots = new ui[query_graph->getVerticesCount()];
+        // Pick a pivot randomly.
+        for (ui i = 1; i < query_graph->getVerticesCount(); ++i) {
+            VertexID u = matching_order[i];
+            for (ui j = 0; j < i; ++j) {
+                VertexID cur_vertex = matching_order[j];
+                if (query_graph->checkEdgeExistence(u, cur_vertex)) {
+                    pivots[i] = cur_vertex;
+                    break;
+                }
+            }
         }
         //End of inputing a specific matching order
     } else {
