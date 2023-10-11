@@ -11,7 +11,7 @@
             "-q", "${workspaceFolder}/test/query_graph/query_dense_16_2.graph",
             "-filter", "CFL",
             "-order", "Input",
-            "-input_order", "1 4 5 0 7 13 2 3 11 12 15 9 10 6 8 14",
+            "-input_order", "1,4,5,0,7,13,2,3,11,12,15,9,10,6,8,14",
             "-engine", "LFTJ"
         ],
         "stopAtEntry": false,

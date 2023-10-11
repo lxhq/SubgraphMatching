@@ -34,48 +34,60 @@ def multiCoreProcessing(fn, params):
     pool.join()
 
 def execute_query(parameters):
-    # print('Start: ' + parameters['data_graph'] + ', ' + parameters['query_graph'], flush=True)
     args = generate_args(parameters['binary_path'], 
                          '-d', parameters['data_graph_dir'] + parameters['data_graph'] + parameters['graph_suffix'], 
                          '-q', parameters['query_graph_dir'] + parameters['query_graph'] + parameters['graph_suffix'], 
                         '-filter', parameters['filter'],
                         '-order', parameters['order'], 
+                        '-input_order', parameters['input_order'],
                         '-engine', parameters['engine'],
                         '-time_limit', parameters['time_limit'], 
                         '-num', parameters['num'])
     (rc, std_output, std_error) = execute_binary(args)
-    with open(parameters['output_dir'] + parameters['output_file_name'], 'w') as file:
+    with open(parameters['output_dir'] + parameters['output_file_name'], 'w+') as file:
+        file.write(std_output.decode())
         if std_error:
             file.write(std_error.decode())
-        file.write(std_output.decode())
         file.flush()
     with atomic_var.get_lock():
         atomic_var.value += 1
-    # print('Done: ' + parameters['data_graph'] + ', ' + parameters['query_graph'], flush=True)
     print(atomic_var.value, '/', total_query_files)
 
-def load_card(card_path):
-    card_dict = set()
+def load_matching_order(card_path, outputs_dir):
+    card_set = set()
+    matching_orders = {}
     with open(card_path, 'r') as file:
         for line in file.readlines():
-            tokens = line.split(',')
-            card_dict.add(tokens[0] + '.graph')
-    return card_dict
+            card_set.add(line.split(',')[0])
+    for file in os.listdir(outputs_dir):
+        if file not in card_set:
+            continue
+        with open(outputs_dir + file, 'r') as f:
+            for line in f.readlines():
+                if line.startswith('Spectrum Order 1 Matching order:'):
+                    matching_orders[file + '.graph'] = line.split(':')[1].strip()[1:-1].replace(", ", ",")
+                    break
+        if file + '.graph' not in matching_orders:
+            raise Exception('The query file ' + file + ' fails to find a matching order')
+    return matching_orders
 
 if __name__ == '__main__':
     data_graph = "yeast"
     home_dir = "/home/lxhq/Documents/workspace"
     card_path = "{}/dataset/{}/query_graph.csv".format(home_dir, data_graph)
-    card_dict = load_card(card_path)
+    outputs_dir = "{}/dataset/outputs/{}/".format(home_dir, data_graph)
+    # matching_orders <- dict('query_file_name': 'matching order', 'query_dense_16_1.graph':'0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15')
+    matching_orders = load_matching_order(card_path, outputs_dir)
     parameters = {
         'data_graph_dir': '{}/dataset/{}/data_graph/'.format(home_dir, data_graph),
         'query_graph_dir' : '{}/dataset/{}/query_graph/'.format(home_dir, data_graph),
         'output_dir': '{}/SubgraphMatching/outputs/{}/'.format(home_dir, data_graph),
         'binary_path': '{}/SubgraphMatching/build/matching/SubgraphMatching.out'.format(home_dir),
-        'time_limit': '1860',
+        'time_limit': '7260',
         'num': 'MAX',
         'filter': 'CFL',
-        'order': 'GQL',
+        'order': 'Input',
+        'input_order': '',
         'engine': 'LFTJ',
         'graph_suffix': '.graph',
         'data_graph': data_graph,
@@ -84,11 +96,12 @@ if __name__ == '__main__':
     }
     parameters_list = []
     for query_file in os.listdir(parameters['query_graph_dir']):
-        if query_file not in card_dict:
+        if query_file not in matching_orders:
             continue
         total_query_files = total_query_files + 1
         query_graph = query_file.split('.')[0]
         cur_parameters = copy.deepcopy(parameters)
+        cur_parameters['input_order'] = matching_orders[query_file]
         cur_parameters['query_graph'] = query_graph
         cur_parameters['output_file_name'] = query_graph
         parameters_list.append(cur_parameters)
