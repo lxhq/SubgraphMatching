@@ -45,7 +45,7 @@
 /**
  * Define ENABLE_FAILING_SET to enable the failing set pruning set intersection method.
  */
-// #define ENABLE_FAILING_SET
+#define ENABLE_FAILING_SET
 
 /**
  * Enable collection the distribution of the results in the data graph.
