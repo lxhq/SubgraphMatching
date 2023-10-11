@@ -75,7 +75,7 @@ if __name__ == '__main__':
     data_graph = "yeast"
     home_dir = "/home/lxhq/Documents/workspace"
     card_path = "{}/dataset/{}/query_graph.csv".format(home_dir, data_graph)
-    outputs_dir = "{}/dataset/outputs/{}/".format(home_dir, data_graph)
+    outputs_dir = "{}/dataset/outputs_RapidMatch/{}/".format(home_dir, data_graph)
     # matching_orders <- dict('query_file_name': 'matching order', 'query_dense_16_1.graph':'0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15')
     matching_orders = load_matching_order(card_path, outputs_dir)
     parameters = {
