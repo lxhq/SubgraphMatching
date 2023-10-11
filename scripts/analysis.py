@@ -1,16 +1,5 @@
 import os
 
-def save_true_counts(true_counts, true_counts_dir, file_name, time_limit):
-    with open(true_counts_dir + file_name, 'w') as f:
-        for file, count, time in true_counts:
-            # filter out incomplete queries
-            if time > time_limit:
-                continue
-            # filter out non exist queries
-            if count == 0:
-                continue
-            f.write(file + ',' + str(count) + ',' + str(time) + '\n')
-
 def get_labels(outputs_dir):
     labels = {}
     for file in os.listdir(outputs_dir):
@@ -34,6 +23,18 @@ def save_labels(labels, labels_path):
         for key, values in labels.items():
             f.write(key + ';' + values[0] + ';' + values[1] + ';' + str(values[2]) + '\n')
 
+def verify_labels(labels, cards_path):
+    with open(cards_path, 'r') as file:
+        for line in file.readlines():
+            tokens = line.split(',')
+            # if tokens[0] not in labels:
+            #     raise Exception(tokens[0] + ' is not included in labels')
+            # if int(tokens[1] != int(labels[tokens[0]][0])):
+            #     raise Exception('The result of {} is different between label and card'.format(tokens[0]))
+            if tokens[0] in labels:
+                if int(tokens[1]) != int(labels[tokens[0]][0]):
+                    print(tokens[1], labels[tokens[0]][0])
+                    raise Exception('The result of {} is different between label and card'.format(tokens[0]))
 
 if __name__ == '__main__':
     # Read and save queries with true counts
@@ -41,8 +42,10 @@ if __name__ == '__main__':
     home_dir = '/home/lxhq/Documents/workspace'
     outputs_dir = '{}/SubgraphMatching/outputs/{}/'.format(home_dir, data_graph)
     labels_path = '{}/SubgraphMatching/outputs/{}_labels.csv'.format(home_dir, data_graph)
+    cards_path = '{}/dataset/{}/query_graph.csv'.format(home_dir, data_graph)
     time_limit = 0
     # labels <- {'query_file_name': [card, call count, {0:1, 4:3, ...}], ...}
-    labels = get_labels(outputs_dir)  
+    labels = get_labels(outputs_dir)
+    verify_labels(labels, cards_path)
     os.remove(labels_path)
     save_labels(labels, labels_path)
