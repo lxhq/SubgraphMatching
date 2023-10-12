@@ -56,9 +56,13 @@ def execute_query(parameters):
 def load_matching_order(card_path, outputs_dir):
     card_set = set()
     matching_orders = {}
+    finished = []
+    for finished_file in os.listdir("./outputs/yeast"):
+        finished.append(finished_file)
     with open(card_path, 'r') as file:
         for line in file.readlines():
-            card_set.add(line.split(',')[0])
+            if line.split(',')[0] not in finished:
+                card_set.add(line.split(',')[0])
     for file in os.listdir(outputs_dir):
         if file not in card_set:
             continue

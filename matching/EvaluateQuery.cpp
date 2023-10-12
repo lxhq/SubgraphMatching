@@ -310,6 +310,9 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
     bool** matching_vertices = new bool*[max_depth];
     for (ui i = 0; i < max_depth; ++i) {
         matching_vertices[i] = new bool[data_graph->getVerticesCount()];
+        for (ui j = 0; j < data_graph->getVerticesCount(); ++j) {
+            matching_vertices[i][j] = false;
+        }
     }
     //End of creating a vector of sets
     while (true) {
@@ -350,7 +353,7 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
                 // }
                 //Store the embedding to matching vertices
                 for (ui w = 0; w < max_depth; ++w) {
-                    matching_vertices[w][embedding[w]] = true;
+                    matching_vertices[order[w]][embedding[w]] = true;
                 }
                 //End of storing
 
