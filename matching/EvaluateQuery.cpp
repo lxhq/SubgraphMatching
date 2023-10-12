@@ -306,11 +306,10 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
     exit_ = false;
 #endif
 
-    //Create a vector of sets to record all valid matching vertices
-    std::vector<std::set<ui>> matching_vertices;
+    //Create a bitmap to record all valid matching vertices
+    bool** matching_vertices = new bool*[max_depth];
     for (ui i = 0; i < max_depth; ++i) {
-        std::set<ui> set;
-        matching_vertices.push_back(set);
+        matching_vertices[i] = new bool[data_graph->getVerticesCount()];
     }
     //End of creating a vector of sets
     while (true) {
@@ -343,13 +342,15 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
 #ifdef ENABLE_FAILING_SET
             reverse_embedding[v] = u;
 #endif
-
             if (cur_depth == max_depth - 1) {
                 embedding_cnt += 1;
                 visited_vertices[v] = false;
+                // if (embedding_cnt % 10000000 == 0) {
+                //     std::cout<<"Progress: "<<embedding_cnt<<endl;
+                // }
                 //Store the embedding to matching vertices
                 for (ui w = 0; w < max_depth; ++w) {
-                    matching_vertices.at(w).insert(embedding[w]);
+                    matching_vertices[w][embedding[w]] = true;
                 }
                 //End of storing
 
@@ -447,18 +448,28 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
 #endif
     //Print out all matching vertices
     for (ui query_vertex = 0; query_vertex < max_depth; ++query_vertex) {
-        std::set<ui> set = matching_vertices.at(query_vertex);
+        bool* vertices = matching_vertices[query_vertex];
         std::cout<<query_vertex<<":";
-        ui count = 0;
-        for (ui data_vertex : set) {
-            std::cout<<data_vertex;
-            if (++count < set.size()) {
-                std::cout<<",";
+        bool first_one = true;
+        for (ui i = 0; i < data_graph->getVerticesCount(); i++) {
+            if (vertices[i]) {
+                if (!first_one) {
+                    std::cout<<",";
+                }
+                std::cout<<i;
+                first_one = false;
             }
         }
         std::cout<<std::endl;
     }
     //End of printing
+
+    //Delete the bitmap
+    for(int i = 0; i < max_depth; i++) {
+        delete[] matching_vertices[i];
+    }
+    delete[] matching_vertices;
+    //End of deleting the bitmap
     return embedding_cnt;
 }
 
