@@ -15,6 +15,8 @@ def get_labels(outputs_dir):
                     call_count = line.split(':')[1].strip()
                 if line.startswith('#Embeddings:'):
                     embeddings = line.split(':')[1].strip()
+        if embeddings is None or call_count is None or len(matching_vertices) == 0:
+            raise Exception('Invalid outputs ' + file)
         labels[file] = [embeddings, call_count, matching_vertices]
     return labels
 
