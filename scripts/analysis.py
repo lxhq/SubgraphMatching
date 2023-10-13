@@ -6,6 +6,7 @@ def get_labels(outputs_dir):
         matching_vertices = {}
         call_count = None
         embeddings = None
+        vertex_num = int(file.split('_')[2])
         with open(outputs_dir + file, 'r') as f:
             for line in f.readlines():
                 if line[0].isdigit():
@@ -15,8 +16,8 @@ def get_labels(outputs_dir):
                     call_count = line.split(':')[1].strip()
                 if line.startswith('#Embeddings:'):
                     embeddings = line.split(':')[1].strip()
-        if embeddings is None or call_count is None or len(matching_vertices) == 0:
-            raise Exception('Invalid outputs ' + file)
+        if embeddings is None or call_count is None or len(matching_vertices) != vertex_num:
+            raise Exception('Invalid output ' + file)
         labels[file] = [embeddings, call_count, matching_vertices]
     return labels
 
@@ -29,21 +30,17 @@ def verify_labels(labels, cards_path):
     with open(cards_path, 'r') as file:
         for line in file.readlines():
             tokens = line.split(',')
-            # if tokens[0] not in labels:
-            #     raise Exception(tokens[0] + ' is not included in labels')
-            # if int(tokens[1] != int(labels[tokens[0]][0])):
-            #     raise Exception('The result of {} is different between label and card'.format(tokens[0]))
-            if tokens[0] in labels:
-                if int(tokens[1]) != int(labels[tokens[0]][0]):
-                    print(tokens[1], labels[tokens[0]][0])
-                    raise Exception('The result of {} is different between label and card'.format(tokens[0]))
+            if tokens[0] not in labels:
+                raise Exception(tokens[0] + ' is not included in labels')
+            if int(tokens[1]) != int(labels[tokens[0]][0]):
+                raise Exception('The result of {} is different between label and card'.format(tokens[0]))
 
 if __name__ == '__main__':
     # Read and save queries with true counts
     data_graph = 'yeast'
     home_dir = '/home/lxhq/Documents/workspace'
-    outputs_dir = '{}/SubgraphMatching/outputs/{}/'.format(home_dir, data_graph)
-    labels_path = '{}/SubgraphMatching/outputs/{}_labels.csv'.format(home_dir, data_graph)
+    outputs_dir = '{}/dataset/outputs_SubgraphMatch/{}/'.format(home_dir, data_graph)
+    labels_path = '{}/dataset/{}/query_graph_labels.csv'.format(home_dir, data_graph)
     cards_path = '{}/dataset/{}/query_graph.csv'.format(home_dir, data_graph)
     time_limit = 0
     # labels <- {'query_file_name': [card, call count, {0:1, 4:3, ...}], ...}
