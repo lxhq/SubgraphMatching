@@ -37,22 +37,22 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
             if rc == 0:
                 embedding_num = 0
-                std_output_list = std_output.split('\n')
+                std_output_list = std_output.split(b'\n')
                 for line in std_output_list:
-                    if '#Embeddings' in line:
-                        embedding_num = int(line.split(':')[1].strip())
+                    if b'#Embeddings' in line:
+                        embedding_num = int(line.split(b':')[1].strip())
                         break
                 if embedding_num != expected_embedding_num:
-                    print 'Filter type {0} {1} is wrong. Expected {2}, Output {3}'.format(filter_type, query_graph_name, expected_embedding_num,
-                                                                      embedding_num)
+                    print('Filter type {0} {1} is wrong. Expected {2}, Output {3}'.format(filter_type, query_graph_name, expected_embedding_num,
+                                                                      embedding_num))
                     exit(-1)
             else:
-                print 'Filter type {0} {1} error.'.format(filter_type, query_graph_name)
+                print('Filter type {0} {1} error.'.format(filter_type, query_graph_name))
                 exit(-1)
 
-        print 'Filter type {0} passes the correctness check.'.format(filter_type)
+        print('Filter type {0} passes the correctness check.'.format(filter_type))
 
-    print 'All filter types pass the correctness check.'
+    print('All filter types pass the correctness check.')
 
     # check the correctness of ordering.
     order_type_list = ['QSI', 'GQL', 'TSO', 'CFL', 'DPiso', 'RI', 'VF2PP']
@@ -67,22 +67,22 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
             if rc == 0:
                 embedding_num = 0
-                std_output_list = std_output.split('\n')
+                std_output_list = std_output.split(b'\n')
                 for line in std_output_list:
-                    if '#Embeddings' in line:
-                        embedding_num = int(line.split(':')[1].strip())
+                    if b'#Embeddings' in line:
+                        embedding_num = int(line.split(b':')[1].strip())
                         break
                 if embedding_num != expected_embedding_num:
-                    print 'Order type {0} {1} is wrong. Expected {2}, Output {3}'.format(order_type, query_graph_name,
-                            expected_embedding_num, embedding_num)
+                    print('Order type {0} {1} is wrong. Expected {2}, Output {3}'.format(order_type, query_graph_name,
+                            expected_embedding_num, embedding_num))
                     exit(-1)
             else:
-                print 'Order type {0} {1} error.'.format(order_type, query_graph_name)
+                print('Order type {0} {1} error.'.format(order_type, query_graph_name))
                 exit(-1)
 
-        print 'Order type {0} passes the correctness check.'.format(order_type)
+        print('Order type {0} passes the correctness check.'.format(order_type))
 
-    print 'All order types pass the correctness check.'
+    print('All order types pass the correctness check.')
 
     # check the correctness of LFTJ engine
     for query_graph_path in query_graph_path_list:
@@ -95,19 +95,19 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
         if rc == 0:
             embedding_num = 0
-            std_output_list = std_output.split('\n')
+            std_output_list = std_output.split(b'\n')
             for line in std_output_list:
-                if '#Embeddings' in line:
-                    embedding_num = int(line.split(':')[1].strip())
+                if b'#Embeddings' in line:
+                    embedding_num = int(line.split(b':')[1].strip())
                     break
             if embedding_num != expected_embedding_num:
-                print 'LFTJ engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
-                        expected_embedding_num, embedding_num)
+                print('LFTJ engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
+                        expected_embedding_num, embedding_num))
                 exit(-1)
         else:
-            print 'LFTJ engine {0} error.'.format(query_graph_name)
+            print('LFTJ engine {0} error.'.format(query_graph_name))
             exit(-1)
-    print 'LFTJ engine pass the correctness check.'
+    print('LFTJ engine pass the correctness check.')
 
     # check the correctness of EXPLORE engine
     for query_graph_path in query_graph_path_list:
@@ -120,19 +120,19 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
         if rc == 0:
             embedding_num = 0
-            std_output_list = std_output.split('\n')
+            std_output_list = std_output.split(b'\n')
             for line in std_output_list:
-                if '#Embeddings' in line:
-                    embedding_num = int(line.split(':')[1].strip())
+                if b'#Embeddings' in line:
+                    embedding_num = int(line.split(b':')[1].strip())
                     break
             if embedding_num != expected_embedding_num:
-                print 'EXPLORE engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
-                        expected_embedding_num, embedding_num)
+                print('EXPLORE engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
+                        expected_embedding_num, embedding_num))
                 exit(-1)
         else:
-            print 'EXPLORE engine {0} error.'.format(query_graph_name)
+            print('EXPLORE engine {0} error.'.format(query_graph_name))
             exit(-1)
-    print 'EXPLORE engine pass the correctness check.'
+    print('EXPLORE engine pass the correctness check.')
 
     # check the correctness of GraphQL engine
     for query_graph_path in query_graph_path_list:
@@ -145,19 +145,19 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
         if rc == 0:
             embedding_num = 0
-            std_output_list = std_output.split('\n')
+            std_output_list = std_output.split(b'\n')
             for line in std_output_list:
-                if '#Embeddings' in line:
-                    embedding_num = int(line.split(':')[1].strip())
+                if b'#Embeddings' in line:
+                    embedding_num = int(line.split(b':')[1].strip())
                     break
             if embedding_num != expected_embedding_num:
-                print 'GQL engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
-                        expected_embedding_num, embedding_num)
+                print('GQL engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
+                        expected_embedding_num, embedding_num))
                 exit(-1)
         else:
-            print 'GQL engine {0} error.'.format(query_graph_name)
+            print('GQL engine {0} error.'.format(query_graph_name))
             exit(-1)
-    print 'GQL engine pass the correctness check.'
+    print('GQL engine pass the correctness check.')
 
     # check the correctness of QSI engine
     for query_graph_path in query_graph_path_list:
@@ -170,19 +170,19 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
         if rc == 0:
             embedding_num = 0
-            std_output_list = std_output.split('\n')
+            std_output_list = std_output.split(b'\n')
             for line in std_output_list:
-                if '#Embeddings' in line:
-                    embedding_num = int(line.split(':')[1].strip())
+                if b'#Embeddings' in line:
+                    embedding_num = int(line.split(b':')[1].strip())
                     break
             if embedding_num != expected_embedding_num:
-                print 'QSI engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
-                        expected_embedding_num, embedding_num)
+                print('QSI engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
+                        expected_embedding_num, embedding_num))
                 exit(-1)
         else:
-            print 'QSI engine {0} error.'.format(query_graph_name)
+            print('QSI engine {0} error.'.format(query_graph_name))
             exit(-1)
-    print 'QSI engine pass the correctness check.'
+    print('QSI engine pass the correctness check.')
 
     # check the correctness of DPiso engine.
     for query_graph_path in query_graph_path_list:
@@ -195,19 +195,19 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
         if rc == 0:
             embedding_num = 0
-            std_output_list = std_output.split('\n')
+            std_output_list = std_output.split(b'\n')
             for line in std_output_list:
-                if '#Embeddings' in line:
-                    embedding_num = int(line.split(':')[1].strip())
+                if b'#Embeddings' in line:
+                    embedding_num = int(line.split(b':')[1].strip())
                     break
             if embedding_num != expected_embedding_num:
-                print 'DPiso engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
-                        expected_embedding_num, embedding_num)
+                print('DPiso engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
+                        expected_embedding_num, embedding_num))
                 exit(-1)
         else:
-            print 'DPiso engine {0} error.'.format(query_graph_name)
+            print('DPiso engine {0} error.'.format(query_graph_name))
             exit(-1)
-    print 'DPiso engine pass the correctness check.'
+    print('DPiso engine pass the correctness check.')
 
     # check the correctness of CECI engine.
     for query_graph_path in query_graph_path_list:
@@ -220,25 +220,25 @@ def check_correctness(binary_path, data_graph_path, query_folder_path, expected_
 
         if rc == 0:
             embedding_num = 0
-            std_output_list = std_output.split('\n')
+            std_output_list = std_output.split(b'\n')
             for line in std_output_list:
-                if '#Embeddings' in line:
-                    embedding_num = int(line.split(':')[1].strip())
+                if b'#Embeddings' in line:
+                    embedding_num = int(line.split(b':')[1].strip())
                     break
             if embedding_num != expected_embedding_num:
-                print 'CECI engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
-                        expected_embedding_num, embedding_num)
+                print('CECI engine {0} is wrong. Expected {1}, Output {2}'.format(query_graph_name,
+                        expected_embedding_num, embedding_num))
                 exit(-1)
         else:
-            print 'CECI engine {0} error.'.format(query_graph_name)
+            print('CECI engine {0} error.'.format(query_graph_name))
             exit(-1)
-    print 'CECI engine pass the correctness check.'
+    print('CECI engine pass the correctness check.')
 
 
 if __name__ == '__main__':
     input_binary_path = sys.argv[1]
     if not os.path.isfile(input_binary_path):
-        print 'The binary {0} does not exist.'.format(input_binary_path)
+        print('The binary {0} does not exist.'.format(input_binary_path))
         exit(-1)
 
     # load expected results.
