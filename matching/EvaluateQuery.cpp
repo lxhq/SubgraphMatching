@@ -353,7 +353,7 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
                 // }
                 //Store the embedding to matching vertices
                 for (ui w = 0; w < max_depth; ++w) {
-                    matching_vertices[order[w]][embedding[w]] = true;
+                    matching_vertices[w][embedding[w]] = true;
                 }
                 //End of storing
 

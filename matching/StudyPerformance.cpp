@@ -191,6 +191,18 @@ int main(int argc, char** argv) {
     end = std::chrono::high_resolution_clock::now();
     double filter_vertices_time_in_ns = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count();
 
+    // Print out the candidates vertices for earch query vertices
+    for (ui i = 0; i < query_graph->getVerticesCount(); i++) {
+        std::cout<<i<<":";
+        for (ui j = 0; j < candidates_count[i]; j++) {
+            std::cout<<candidates[i][j];
+            if (j != candidates_count[i] - 1) {
+                std::cout<<",";
+            }
+        }
+        std::cout<<std::endl;
+    }
+
     // Compute the candidates false positive ratio.
 #ifdef OPTIMAL_CANDIDATES
     std::vector<ui> optimal_candidates_count;
