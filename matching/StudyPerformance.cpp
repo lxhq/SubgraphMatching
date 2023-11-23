@@ -202,6 +202,7 @@ int main(int argc, char** argv) {
         }
         std::cout<<std::endl;
     }
+    exit(-1);
 
     // Compute the candidates false positive ratio.
 #ifdef OPTIMAL_CANDIDATES
