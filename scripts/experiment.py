@@ -1,18 +1,19 @@
 from subprocess import Popen, PIPE
 import multiprocessing as mp
 import copy
-import os
 from multiprocessing import Value
 from ctypes import c_int
+from pathlib import Path
+import shutil
+import os
 
 atomic_var = Value(c_int)
-total_query_files = 0
+total_query_files = {}
 
 def generate_args(binary, *params):
     arguments = [binary]
     arguments.extend(list(params))
     return arguments
-
 
 def execute_binary(args):
     process = Popen(' '.join(args), shell=True, stdout=PIPE, stderr=PIPE)
@@ -21,11 +22,10 @@ def execute_binary(args):
     rc = process.returncode
     return rc, std_output, std_error
 
-
 def error_callback(error):
     print(f"Error info: {error}", flush=True)
 
-def multiCoreProcessing(fn, params):
+def multi_core_processing(fn, params):
     num_cores = int(mp.cpu_count())
     print("there are " + str(num_cores) + " cores", flush=True)
     pool = mp.Pool(num_cores - 1)
@@ -35,78 +35,63 @@ def multiCoreProcessing(fn, params):
 
 def execute_query(parameters):
     args = generate_args(parameters['binary_path'], 
-                         '-d', parameters['data_graph_dir'] + parameters['data_graph'] + parameters['graph_suffix'], 
-                         '-q', parameters['query_graph_dir'] + parameters['query_graph'] + parameters['graph_suffix'], 
+                         '-d', parameters['data_graph_path'], 
+                         '-q', parameters['query_graph_path'], 
                         '-filter', parameters['filter'],
                         '-order', parameters['order'], 
-                        '-input_order', parameters['input_order'],
                         '-engine', parameters['engine'],
-                        '-time_limit', parameters['time_limit'], 
                         '-num', parameters['num'])
     (rc, std_output, std_error) = execute_binary(args)
-    with open(parameters['output_dir'] + parameters['output_file_name'], 'w+') as file:
+    with open(parameters['output_path'], 'w+') as file:
         file.write(std_output.decode())
         if std_error:
             file.write(std_error.decode())
         file.flush()
     with atomic_var.get_lock():
         atomic_var.value += 1
-    print(atomic_var.value, '/', total_query_files, flush=True)
+    print(atomic_var.value, '/', 
+          total_query_files[parameters['data_graph_path'].split('/')[-1].split('.')[0]], 
+          flush=True)
 
-def load_matching_order(card_path, outputs_dir):
-    card_set = set()
-    matching_orders = {}
-    finished = []
-    for finished_file in os.listdir("./outputs/yeast"):
-        finished.append(finished_file)
-    with open(card_path, 'r') as file:
-        for line in file.readlines():
-            if line.split(',')[0] not in finished:
-                card_set.add(line.split(',')[0])
-    for file in os.listdir(outputs_dir):
-        if file not in card_set:
-            continue
-        with open(outputs_dir + file, 'r') as f:
-            for line in f.readlines():
-                if line.startswith('Spectrum Order 1 Matching order:'):
-                    matching_orders[file + '.graph'] = line.split(':')[1].strip()[1:-1].replace(", ", ",")
-                    break
-        if file + '.graph' not in matching_orders:
-            raise Exception('The query file ' + file + ' fails to find a matching order')
-    return matching_orders
+def get_valid_queries(path):
+    res = set()
+    with open(path, 'r') as f:
+        for line in f.readlines():
+            res.add(line.split(',')[0])
+    return res
 
 if __name__ == '__main__':
-    data_graph = "yeast"
-    home_dir = "/home/ubuntu/workspace"
-    card_path = "{}/dataset/{}/query_graph.csv".format(home_dir, data_graph)
-    outputs_dir = "{}/dataset/outputs_RapidMatch/{}/".format(home_dir, data_graph)
-    # matching_orders <- dict('query_file_name': 'matching order', 'query_dense_16_1.graph':'0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15')
-    matching_orders = load_matching_order(card_path, outputs_dir)
+    data_graphs = ['yeast', 'youtube', 'wordnet']
+    home_dir = '/home/lxhq/Documents/workspace'
+    general_output_dir = '{}/SubgraphMatching/outputs'.format(home_dir)
+    if Path(general_output_dir).is_dir():
+        shutil.rmtree(general_output_dir)
+    os.mkdir(general_output_dir)
     parameters = {
-        'data_graph_dir': '{}/dataset/{}/data_graph/'.format(home_dir, data_graph),
-        'query_graph_dir' : '{}/dataset/{}/query_graph/'.format(home_dir, data_graph),
-        'output_dir': '{}/SubgraphMatching/outputs/{}/'.format(home_dir, data_graph),
+        'data_graph_path': '',
+        'query_graph_path' : '',
+        'output_path': '',
         'binary_path': '{}/SubgraphMatching/build/matching/SubgraphMatching.out'.format(home_dir),
-        'time_limit': '7260',
         'num': 'MAX',
         'filter': 'CFL',
-        'order': 'Input',
-        'input_order': '',
+        'order': 'GQL',
         'engine': 'LFTJ',
-        'graph_suffix': '.graph',
-        'data_graph': data_graph,
-        'query_graph': '',
-        'output_file_name': ''
     }
+
     parameters_list = []
-    for query_file in os.listdir(parameters['query_graph_dir']):
-        if query_file not in matching_orders:
-            continue
-        total_query_files = total_query_files + 1
-        query_graph = query_file.split('.')[0]
-        cur_parameters = copy.deepcopy(parameters)
-        cur_parameters['input_order'] = matching_orders[query_file]
-        cur_parameters['query_graph'] = query_graph
-        cur_parameters['output_file_name'] = query_graph
-        parameters_list.append(cur_parameters)
-    multiCoreProcessing(execute_query, parameters_list)
+    for data_graph in data_graphs:
+        output_dir = '{}/{}'.format(general_output_dir, data_graph)
+        if Path(output_dir).is_dir():
+            shutil.rmtree(output_dir)
+        os.mkdir(output_dir)
+        valid_queries_path = '{}/dataset/{}/query_graph.csv'.format(home_dir, data_graph)
+        valid_queries = get_valid_queries(valid_queries_path)
+        print('There are {} queries in {}'.format(len(valid_queries), data_graph), flush=True)
+        total_query_files[data_graph] = len(valid_queries)
+        for query_file in valid_queries:
+            cur_parameters = copy.deepcopy(parameters)
+            cur_parameters['data_graph_path'] = '{}/dataset/{}/data_graph/{}.graph'.format(home_dir, data_graph, data_graph)
+            cur_parameters['query_graph_path'] = '{}/dataset/{}/query_graph/{}.graph'.format(home_dir, data_graph, query_file)
+            cur_parameters['output_path'] = '{}/SubgraphMatching/outputs/{}/{}.txt'.format(home_dir, data_graph, query_file)
+            parameters_list.append(cur_parameters)
+    multi_core_processing(execute_query, parameters_list)
