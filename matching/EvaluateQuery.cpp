@@ -317,7 +317,6 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
     //End of creating a vector of sets
     while (true) {
         while (idx[cur_depth] < idx_count[cur_depth]) {
-            call_count += 1;
             ui valid_idx = valid_candidate_idx[cur_depth][idx[cur_depth]];
             VertexID u = order[cur_depth];
             VertexID v = candidates[u][valid_idx];
@@ -345,12 +344,10 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
 #ifdef ENABLE_FAILING_SET
             reverse_embedding[v] = u;
 #endif
+
             if (cur_depth == max_depth - 1) {
                 embedding_cnt += 1;
                 visited_vertices[v] = false;
-                // if (embedding_cnt % 10000000 == 0) {
-                //     std::cout<<"Progress: "<<embedding_cnt<<endl;
-                // }
                 //Store the embedding to matching vertices
                 for (ui w = 0; w < max_depth; ++w) {
                     matching_vertices[w][embedding[w]] = true;
@@ -370,7 +367,7 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
                     goto EXIT;
                 }
             } else {
-                // call_count += 1;
+                call_count += 1;
                 cur_depth += 1;
 
                 idx[cur_depth] = 0;
@@ -449,6 +446,7 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
     }
     delete[] qfliter_bsr_graph_;
 #endif
+
     //Print out all matching vertices
     for (ui query_vertex = 0; query_vertex < max_depth; ++query_vertex) {
         bool* vertices = matching_vertices[query_vertex];
