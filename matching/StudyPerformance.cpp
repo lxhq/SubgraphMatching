@@ -6,7 +6,6 @@
 #include <future>
 #include <thread>
 #include <fstream>
-#include <sstream>
 
 #include "matchingcommand.h"
 #include "graph/graph.h"
@@ -89,8 +88,6 @@ int main(int argc, char** argv) {
     std::string input_order_num = command.getOrderNum();
     std::string input_distribution_file_path = command.getDistributionFilePath();
     std::string input_csr_file_path = command.getCSRFilePath();
-    std::string input_order = command.getInputOrder();
-
     /**
      * Output the command line information.
      */
@@ -104,7 +101,6 @@ int main(int argc, char** argv) {
     std::cout << "\tOutput Limit: " << input_max_embedding_num << std::endl;
     std::cout << "\tTime Limit (seconds): " << input_time_limit << std::endl;
     std::cout << "\tOrder Num: " << input_order_num << std::endl;
-    std::cout << "\tInput Order: " << input_order << std::endl;
     std::cout << "\tDistribution File Path: " << input_distribution_file_path << std::endl;
     std::cout << "--------------------------------------------------------------------" << std::endl;
 
@@ -288,30 +284,8 @@ int main(int argc, char** argv) {
     }
     else if (input_order_type == "Spectrum") {
         GenerateQueryPlan::generateOrderSpectrum(query_graph, spectrum, order_num);
-    } else if (input_order_type == "Input") {
-        //User can input a specific matching order
-        matching_order = new ui[query_graph->getVerticesCount()];
-        std::stringstream ss(input_order);
-        ui matching_order_counter = 0;
-        for (ui u; ss >> u;) {
-            matching_order[matching_order_counter++] = u;
-            if (ss.peek() == ',')
-                ss.ignore();
-        }
-        pivots = new ui[query_graph->getVerticesCount()];
-        // Pick a pivot randomly.
-        for (ui i = 1; i < query_graph->getVerticesCount(); ++i) {
-            VertexID u = matching_order[i];
-            for (ui j = 0; j < i; ++j) {
-                VertexID cur_vertex = matching_order[j];
-                if (query_graph->checkEdgeExistence(u, cur_vertex)) {
-                    pivots[i] = cur_vertex;
-                    break;
-                }
-            }
-        }
-        //End of inputing a specific matching order
-    } else {
+    }
+    else {
         std::cout << "The specified order type '" << input_order_type << "' is not supported." << std::endl;
     }
 
