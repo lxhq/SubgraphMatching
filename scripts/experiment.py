@@ -7,8 +7,8 @@ from pathlib import Path
 import shutil
 import os
 
-atomic_var = Value(c_int)
-total_query_files = {}
+finished_file = Value(c_int)
+total_query_files = 0
 
 def generate_args(binary, *params):
     arguments = [binary]
@@ -38,7 +38,6 @@ def execute_query(parameters):
                          '-d', parameters['data_graph_path'], 
                          '-q', parameters['query_graph_path'], 
                         '-filter', parameters['filter'],
-                        '-order', parameters['order'], 
                         '-engine', parameters['engine'],
                         '-num', parameters['num'])
     (rc, std_output, std_error) = execute_binary(args)
@@ -47,11 +46,9 @@ def execute_query(parameters):
         if std_error:
             file.write(std_error.decode())
         file.flush()
-    with atomic_var.get_lock():
-        atomic_var.value += 1
-    print(atomic_var.value, '/', 
-          total_query_files[parameters['data_graph_path'].split('/')[-1].split('.')[0]], 
-          flush=True)
+    with finished_file.get_lock():
+        finished_file.value += 1
+    print(finished_file.value, '/', total_query_files, flush=True)
 
 def get_valid_queries(path):
     res = set()
@@ -62,19 +59,17 @@ def get_valid_queries(path):
 
 if __name__ == '__main__':
     data_graphs = ['yeast', 'youtube', 'wordnet']
-    home_dir = '/home/lxhq/Documents/workspace'
+    home_dir = '/home/ubuntu/workspace'
     general_output_dir = '{}/SubgraphMatching/outputs'.format(home_dir)
-    if Path(general_output_dir).is_dir():
-        shutil.rmtree(general_output_dir)
-    os.mkdir(general_output_dir)
+    if not Path(general_output_dir).is_dir():
+        os.mkdir(general_output_dir)
     parameters = {
         'data_graph_path': '',
         'query_graph_path' : '',
         'output_path': '',
         'binary_path': '{}/SubgraphMatching/build/matching/SubgraphMatching.out'.format(home_dir),
         'num': 'MAX',
-        'filter': 'CFL',
-        'order': 'GQL',
+        'filter': 'GQL',
         'engine': 'LFTJ',
     }
 
@@ -87,11 +82,11 @@ if __name__ == '__main__':
         valid_queries_path = '{}/dataset/{}/query_graph.csv'.format(home_dir, data_graph)
         valid_queries = get_valid_queries(valid_queries_path)
         print('There are {} queries in {}'.format(len(valid_queries), data_graph), flush=True)
-        total_query_files[data_graph] = len(valid_queries)
+        total_query_files += len(valid_queries)
         for query_file in valid_queries:
             cur_parameters = copy.deepcopy(parameters)
             cur_parameters['data_graph_path'] = '{}/dataset/{}/data_graph/{}.graph'.format(home_dir, data_graph, data_graph)
             cur_parameters['query_graph_path'] = '{}/dataset/{}/query_graph/{}.graph'.format(home_dir, data_graph, query_file)
-            cur_parameters['output_path'] = '{}/SubgraphMatching/outputs/{}/{}.txt'.format(home_dir, data_graph, query_file)
+            cur_parameters['output_path'] = '{}/{}.txt'.format(output_dir, query_file)
             parameters_list.append(cur_parameters)
     multi_core_processing(execute_query, parameters_list)
