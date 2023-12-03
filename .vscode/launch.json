@@ -9,9 +9,7 @@
         "args": [
             "-d", "${workspaceFolder}/test/data_graph/HPRD.graph", 
             "-q", "${workspaceFolder}/test/query_graph/query_dense_16_2.graph",
-            "-filter", "CFL",
-            "-order", "GQL",
-            "-engine", "LFTJ"
+            "-filter", "GQL",
         ],
         "stopAtEntry": false,
         "cwd": "${fileDirname}",

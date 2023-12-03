@@ -82,5 +82,6 @@
         "ios": "cpp",
         "locale": "cpp",
         "queue": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }
