@@ -257,7 +257,7 @@ void EvaluateQuery::releaseBuffer(ui query_vertices_num, ui *idx, ui *idx_count,
 size_t
 EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***edge_matrix, ui **candidates,
                     ui *candidates_count,
-                    ui *order, size_t output_limit_num, size_t &call_count) {
+                    ui *order, size_t output_limit_num, size_t &call_count, size_t orbit) {
 
 #ifdef DISTRIBUTION
     distribution_count_ = new size_t[data_graph->getVerticesCount()];
@@ -265,6 +265,10 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
     size_t* begin_count = new size_t[query_graph->getVerticesCount()];
     memset(begin_count, 0, query_graph->getVerticesCount() * sizeof(size_t));
 #endif
+    // create an size_t array with size of the data graph vertices count
+    // and initialize all the elements to 0
+    size_t *local_subgraph_counting = new size_t[data_graph->getVerticesCount()];
+    memset(local_subgraph_counting, 0, data_graph->getVerticesCount() * sizeof(size_t));
 
     // Generate bn.
     ui **bn;
@@ -338,6 +342,7 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
 
             if (cur_depth == max_depth - 1) {
                 embedding_cnt += 1;
+                local_subgraph_counting[embedding[orbit]] += 1;
                 visited_vertices[v] = false;
 
 #ifdef DISTRIBUTION
@@ -432,7 +437,11 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
     }
     delete[] qfliter_bsr_graph_;
 #endif
-
+    // print the local subgraph counting
+    for (int i = 0; i < data_graph->getVerticesCount(); i++) {
+        std::cout << "Vertex"<< i << ":" <<local_subgraph_counting[i]<<std::endl;
+    }
+    delete [] local_subgraph_counting;
     return embedding_cnt;
 }
 

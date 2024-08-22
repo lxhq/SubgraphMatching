@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    Graph* query_graph = new Graph(true);
+    Graph* query_graph = new Graph(true, true);
     query_graph->loadGraphFromFile(input_query_graph_file);
     query_graph->buildCoreTable();
 

@@ -34,7 +34,7 @@ public:
                                   ui *candidates_count, ui *order, ui *pivot, size_t output_limit_num, size_t &call_count);
 
     static size_t LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***edge_matrix, ui **candidates, ui *candidates_count,
-                           ui *order, size_t output_limit_num, size_t &call_count);
+                           ui *order, size_t output_limit_num, size_t &call_count, size_t orbit=0);
 
     static size_t
     exploreGraphQLStyle(const Graph *data_graph, const Graph *query_graph, ui **candidates, ui *candidates_count, ui *order,

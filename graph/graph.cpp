@@ -92,7 +92,12 @@ void Graph::loadGraphFromFile(const std::string &file_path) {
     }
 
     char type;
-    infile >> type >> vertices_count_ >> edges_count_;
+    if (is_query_graph_) {
+        infile >> type >> vertices_count_ >> edges_count_ >> orbit_;
+    } else {
+        infile >> type >> vertices_count_ >> edges_count_;
+        orbit_ = 0;
+    }
     offsets_ = new ui[vertices_count_ +  1];
     offsets_[0] = 0;
 
@@ -166,7 +171,12 @@ void Graph::loadGraphFromFile(const std::string &file_path) {
 }
 
 void Graph::printGraphMetaData() {
-    std::cout << "|V|: " << vertices_count_ << ", |E|: " << edges_count_ << ", |\u03A3|: " << labels_count_ << std::endl;
+    std::cout << "|V|: " << vertices_count_ << ", |E|: " << edges_count_ << ", |\u03A3|: " << labels_count_;
+    if (is_query_graph_) {
+        std::cout << ", Orbit: " <<orbit_<< std::endl;
+    } else {
+        std::cout << std::endl;
+    }
     std::cout << "Max Degree: " << max_degree_ << ", Max Label Frequency: " << max_label_frequency_ << std::endl;
 }
 

@@ -1,0 +1,36 @@
+{
+    "configurations": [
+
+    {
+        "name": "(gdb) Launch",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/matching/SubgraphMatching.out",
+        "args": [
+            "-d", "${workspaceFolder}/test/data_graph/web-spam-new.graph", 
+            "-q", "${workspaceFolder}/test/query_graph/pattern_graph_new/5voc/15.graph",
+            "-filter", "GQL",
+            "-order", "GQL",
+            "-engine", "LFTJ",
+            "-num", "MAX"
+        ],
+        "stopAtEntry": false,
+        "cwd": "${fileDirname}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "gdb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            },
+            {
+                "description": "Set Disassembly Flavor to Intel",
+                "text": "-gdb-set disassembly-flavor intel",
+                "ignoreFailures": true
+            }
+        ]
+    }
+    ]
+}

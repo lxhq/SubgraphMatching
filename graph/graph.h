@@ -18,9 +18,11 @@
 class Graph {
 private:
     bool enable_label_offset_;
+    bool is_query_graph_;
 
     ui vertices_count_;
     ui edges_count_;
+    ui orbit_;
     ui labels_count_;
     ui max_degree_;
     ui max_label_frequency_;
@@ -50,8 +52,9 @@ private:
 #endif
 
 public:
-    Graph(const bool enable_label_offset) {
+    Graph(const bool enable_label_offset, const bool is_query_graph=false) {
         enable_label_offset_ = enable_label_offset;
+        is_query_graph_ = is_query_graph;
 
         vertices_count_ = 0;
         edges_count_ = 0;
@@ -95,6 +98,10 @@ public:
                                const std::string& label_path);
     void printGraphMetaData();
 public:
+    const ui getOrbit() const {
+        return orbit_;
+    }
+    
     const ui getLabelsCount() const {
         return labels_count_;
     }
