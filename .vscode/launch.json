@@ -7,8 +7,8 @@
         "request": "launch",
         "program": "${workspaceFolder}/build/matching/SubgraphMatching.out",
         "args": [
-            "-d", "${workspaceFolder}/test/data_graph/web-spam-new.graph", 
-            "-q", "${workspaceFolder}/test/query_graph/pattern_graph_new/5voc/15.graph",
+            "-d", "${workspaceFolder}/test/data_graph/web-spam-new.txt", 
+            "-q", "${workspaceFolder}/test/query_graph/pattern_graph_new/5voc/15.txt",
             "-filter", "GQL",
             "-order", "GQL",
             "-engine", "LFTJ",

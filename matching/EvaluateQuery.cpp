@@ -257,7 +257,7 @@ void EvaluateQuery::releaseBuffer(ui query_vertices_num, ui *idx, ui *idx_count,
 size_t
 EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***edge_matrix, ui **candidates,
                     ui *candidates_count,
-                    ui *order, size_t output_limit_num, size_t &call_count, size_t orbit) {
+                    ui *order, size_t output_limit_num, size_t &call_count) {
 
 #ifdef DISTRIBUTION
     distribution_count_ = new size_t[data_graph->getVerticesCount()];
@@ -267,6 +267,7 @@ EvaluateQuery::LFTJ(const Graph *data_graph, const Graph *query_graph, Edges ***
 #endif
     // create an size_t array with size of the data graph vertices count
     // and initialize all the elements to 0
+    ui orbit = query_graph->getOrbit();
     size_t *local_subgraph_counting = new size_t[data_graph->getVerticesCount()];
     memset(local_subgraph_counting, 0, data_graph->getVerticesCount() * sizeof(size_t));
 
