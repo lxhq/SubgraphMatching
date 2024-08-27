@@ -3,7 +3,7 @@
 # Directory containing the input files
 prefix="/home/ubuntu/Documents/workspace/SubgraphMatching"
 input_dir="$prefix/test/query_graph/pattern_graph_new/"
-data_graph="$prefix/test/data_graph/web-spam-new.graph"
+data_graph="$prefix/test/data_graph/web-spam-new.txt"
 output_dir="$prefix/test/outputs/"
 executable="$prefix/build/matching/SubgraphMatching.out"
 log_file="$prefix/task_log.txt"
